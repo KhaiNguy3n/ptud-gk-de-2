@@ -3,6 +3,7 @@
 ## Thông tin cá nhân  
 - **Họ và Tên:**  Nguyễn Khải
 - **Mã số sinh viên:** 20025651
+- **STT:** 30
 
 ## Giới thiệu dự án  
 Đây là ứng dụng quản lý công việc được xây dựng bằng Flask, cho phép người dùng theo dõi và quản lý các task với tính năng upload avatar và thông báo task quá hạn.. 
