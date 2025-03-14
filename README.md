@@ -103,21 +103,4 @@
    - Theo dõi task quá hạn
    - Cập nhật trạng thái task
 
-### 8. Backup Dữ Liệu
-
-- Database được lưu trong file `tasks.db`
-- Avatars được lưu trong thư mục `static/avatars`
-- Sao lưu các file này để đảm bảo dữ liệu
-
-### 10. Cập Nhật Ứng Dụng
-
-1. Pull code mới:
-   ```bash
-   git pull origin main
-   ```
-
-2. Cài đặt các package mới (nếu có):
-   ```bash
-   pip install -r requirements.txt
-   ```
 
