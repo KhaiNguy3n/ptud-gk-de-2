@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Style cho layout một cột */
+        body {
+            background-color: #284868;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px; /* Giới hạn chiều rộng tối đa cho layout một cột */
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .task-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+        }
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .overdue-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #29611a;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: pulse-red 2s infinite;
+            z-index: 1000;
+        }
+        .overdue-dropdown {
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .overdue-tasks-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .overdue-task-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .overdue-task-item:last-child {
+            border-bottom: none;
+        }
+        .overdue-task-item.critical {
+            background-color: #fff5f5;
+        }
+        .overdue-task-item.today {
+            background-color: #fff9e6;
+        }
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(42, 167, 49, 0.7);
+            }
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
+        }
+        /* Cải thiện responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .task-card {
+                padding: 15px;
+            }
+        }
+        /* Style cho form elements */
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(42, 182, 100, 0.25);
+        }
+        /* Style cho buttons */
+        .btn {
+            border-radius: 6px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background-color: #24c531;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #23b950;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-tasks me-2"></i>Task Manager
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('index') }}">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="nav-link">
+                                <div class="navbar-avatar">
+                                    {% if current_user.avatar_path %}
+                                        <img src="{{ url_for('static', filename=current_user.avatar_path) }}" 
+                                             alt="User Avatar" class="rounded-circle">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='default-avatar.png') }}" 
+                                             alt="Default Avatar" class="rounded-circle">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
